@@ -26,19 +26,7 @@ def savestatistics(name):
 		except:
 			pass
 	out.close()
-# def readprobar():
-    # d=[]
-    # with open('probar.json', 'r') as f:
-        # for line in f:
-            # d=json.loads(line)
-        
-        # f.close()
 
-        # return d
-def print(err):
-	with open("print.txt", "a+") as rr:
-		rr.write(err)
-		rr.close()
 def compresion(name,datachck):
 	lcnt = 0
 	lines = 0
@@ -58,15 +46,6 @@ def compresion(name,datachck):
 				cc.write(item)
 			cc.close()
 
-def print():
-    try:
-        with open("print.txt", "r") as rr:
-            err = rr.read()
-            return err
-            rr.close()
-    except: 
-        with open("print.txt", "w+") as rr:
-            rr.close()
 
 
 def openfile():
@@ -99,9 +78,6 @@ class GUI(Tk):
         self.left= Frame(self.tk, bg="black")
         self.left.grid(column=0, row = 0, pady=5 ,padx=10, sticky=N)
         
-        #self.center = Frame (self.tk ,bg= "black")
-        #self.center.grid(column=1, row = 0, padx=10, sticky=N+S+E+W )
-        
         self.center = Separator(self.tk, orient="vertical")
         self.center.grid(column=1, row=0, sticky="ns")
         
@@ -121,31 +97,38 @@ class GUI(Tk):
         self.rownrleft = 0
         self.rownrright = 0
 
-        self.titlelbl= Label(self.right, text="Service Status:",bg="black", fg="#00CC00",font=("Helvetica", 24))
-        self.titlelbl2= Label(self.left, text="GW Status:",bg="black", fg="#00CC00",font=("Helvetica", 24))
+        self.titlelbl= Label(self.right, text="Service Status:",bg="black",
+                                fg="#00CC00",font=("Helvetica", 24))
+        self.titlelbl2= Label(self.left, text="GW Status:",bg="black",
+                                fg="#00CC00",font=("Helvetica", 24))
         self.titlelbl.grid(column=0, row = 0,sticky=N)        
         self.titlelbl2.grid(column=0, row = 0,sticky=N)
         
         #self.probars=readprobar()
-        self.statuslabel = Label(self.botFrame, text="Script status :  ", bg="black",fg="#00CC00", font=("Helvetica", 24))
+        self.statuslabel = Label(self.botFrame, text="Script status :  ",
+                                    bg="black",fg="#00CC00", font=("Helvetica", 24))
         self.statuslabel.grid(column=0, row = 0)
         
 
         
-        self.progress = ttk.Progressbar(self.probar,orient ="horizontal",length = 410, mode ="determinate")
+        self.progress = ttk.Progressbar(self.probar,orient ="horizontal",
+                                            length = 410, mode ="determinate")
         self.progress.grid(column=0, row = 0,pady= (20,0))
         
         self.string = StringVar()
         self.timecount = StringVar()
     
         
-        self.titlelbl3= Label(self.probar, textvariable= self.string ,bg="black", fg="#00CC00",font=("Helvetica", 24))
+        self.titlelbl3= Label(self.probar, textvariable= self.string ,
+                                bg="black", fg="#00CC00",font=("Helvetica", 24))
         self.titlelbl3.grid(column=0, row = 1)
         
-        self.statuscount1 = Label(self.botFrame, text="Pinger last run in :",fg="#00CC00", bg="black", font=("Helvetica", 24))
+        self.statuscount1 = Label(self.botFrame, text="Pinger last run in :",
+                                    fg="#00CC00", bg="black", font=("Helvetica", 24))
         self.statuscount1.grid(column=0, row = 0)
         
-        self.statuscount = Label(self.botFrame, textvariable=self.timecount,fg="#00CC00", bg="black", font=("Helvetica", 24))
+        self.statuscount = Label(self.botFrame, textvariable=self.timecount,
+                                    fg="#00CC00", bg="black", font=("Helvetica", 24))
         self.statuscount.grid(column=0, row = 1)
         
         
@@ -168,7 +151,6 @@ class GUI(Tk):
         
         self.progress["maximum"] = len(self.list)*10
         self.right
-        #err=str( print() )
 
         
         self.list = openfile()
@@ -196,26 +178,15 @@ class GUI(Tk):
                 self.rownrright+=1
                 name=elem["name"]
             if elem["status"]=="true":
-                lb = Label(whatframe,text=name , fg="#00CC00",bg="black", font=("Helvetica", 28))
+                lb = Label(whatframe,text=name , fg="#00CC00",
+                            bg="black", font=("Helvetica", 28))
             if elem["status"]=="false":
-                lb = Label(whatframe,text=name, fg="black",bg="#00CC00", font=("Helvetica", 28))
+                lb = Label(whatframe,text=name, fg="black",
+                            bg="#00CC00", font=("Helvetica", 28))
             lb.grid(column= 0, row = whatrow ,pady=10 , sticky= W+E)	
             
             self.label[elem["name"]] = lb
             
-        #lastrun = pingervalidation()
-        
-        # if lastrun == 'True':
-            # self.timespend = 0
-            # self.freezecheck += 1
-            # self.timecount.set (str(self.timespend))
-
-        # else: 
-            # self.timespend += 1
-            # self.freezecheck1 = 0
-            # self.timecount.set (str(self.timespend))
-
-
         self.wd=self.tk.winfo_reqwidth()
         self.wdd=self.tk.winfo_width()
 
@@ -229,7 +200,6 @@ class GUI(Tk):
         self.tk.after(1000, self.Pinger)#Program refresh main window works every 5s
 		
     def Pinger(self):
-        #self.self.list
         xcount=0
         DETACHED_PROCESS = 8
         for ele in self.list:
@@ -242,7 +212,8 @@ class GUI(Tk):
                     datachck+=1
                     if datachck == 11:
                         datachck =0
-                    response = subprocess.call("ping -n 1 " + hostname, creationflags=DETACHED_PROCESS)    
+                    response = subprocess.call("ping -n 1 " + hostname,
+                                                creationflags=DETACHED_PROCESS)    
                     #response = os.system("ping -n 1 " + hostname)
                     savestatistics(hostname)
                     print(hostname)
@@ -285,8 +256,8 @@ class GUI(Tk):
                 try: #If server was offline it checks if server came back online
                     serverback=0
                     for i in range(10):
-                        #responsecheck = subprocess.call("ping -n 1 " + hostname, creationflags=DETACHED_PROCESS)
-                        responsecheck =  os.system("ping " + hostname)
+                        responsecheck = subprocess.call("ping -n 1 " + hostname, creationflags=DETACHED_PROCESS)
+                        #responsecheck =  os.system("ping " + hostname)
                         
                         if responsecheck == 0:
                             serverback+=1
@@ -296,7 +267,7 @@ class GUI(Tk):
                             ele["status"] = "true"
                 except:
                     pass
-                    #print("Failed verify offline server")
+                    print("Failed verify offline server")
                 xcount+=10
                 #probar(xcount,len(dict)*10)
         try:
