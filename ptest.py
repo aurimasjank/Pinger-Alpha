@@ -12,6 +12,15 @@ import tkinter.messagebox as tkMessageBox
 from tkinter import ttk
 import sys
 import threading
+'''
+Programa sudaro dvi dalys 1) GUI (class GUI)
+2) Svetainiu ping'inimas(def Pinger())
+Deja paleidus abu iskart programa nulusta, tam manau reiktu 
+threading kuris padetu siuos 2 procesus leisti kartu 
+
+
+
+'''
 
 def savefile(d):
     dic= {}
@@ -55,7 +64,7 @@ def timestamp(name):
 def openfile():
     d={}
     lists=[]
-    with open('test.json', 'r') as f:
+    with open('test.json', 'r+') as f:
         for line in f:
             line_ = json.loads(line)
             name = list(line_.keys())[0]
@@ -193,7 +202,7 @@ class GUI(Tk):
         time.sleep(60)
         
 def Pinger():
-
+    print(threading.enumerate())
     xcount=0
     DETACHED_PROCESS = 8
     list=[]
@@ -271,18 +280,20 @@ def Pinger():
 
 
 class ProgramManager(threading.Thread):
+
     def run(self):
         while True:
             name= threading.currentThread().getName()
             if name == "gui":
                 Gui= GUI()
-                Gui.mainloop()
+                GUI().mainloop()
             if name == "pinger":
                 Pinger()
     
 
 if __name__ == '__main__':
     x = ProgramManager(name="gui")
+
     y = ProgramManager(name="pinger")
     x.start()
     y.start()
