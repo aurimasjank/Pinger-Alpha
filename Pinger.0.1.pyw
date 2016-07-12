@@ -14,15 +14,7 @@ import sys
 import threading
 from _thread import start_new_thread 
 import _thread
-'''
-Programa sudaro dvi dalys 1) GUI (class GUI)
-2) Svetainiu ping'inimas(def Pinger())
-Deja paleidus abu iskart programa nulusta, tam manau reiktu 
-threading kuris padetu siuos 2 procesus leisti kartu 
 
-
-
-'''
 
 def savefile(d):
     dic= {}
@@ -32,13 +24,16 @@ def savefile(d):
             fp.write('\n')
         fp.close
 def savestatistics(name):
-	with open(name+".txt", "a+") as out:
-		try:
-			out.write(str(subprocess.check_output("ping -n 1 " + name)))
-			out.write("\n")
-		except:
-			pass
-	out.close()
+
+    with open(name+".txt", "a+") as out:
+        try:
+            out.write(str(subprocess.check_output("ping -n 1 " + hostname, creationflags=DETACHED_PROCESS,
+                                             stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)))
+            
+            out.write("\n")
+        except:
+            pass
+    out.close()
 
 def compresion(name,datachck):
 	lcnt = 0
@@ -77,6 +72,8 @@ def openfile():
         for ele in d:
             lists.append(d[ele])
         return lists
+def systemexit():
+    sys.exit()
 
 
 class GUI(Tk):
@@ -107,7 +104,7 @@ class GUI(Tk):
         self.probar.grid(column=1, row = 1, sticky= S)
         
         self.botFrame = Frame(self.tk, bg="black")
-        self.botFrame.grid(column=2, row = 1, pady=5, sticky= S)
+        self.botFrame.grid(column=2, row = 1, pady=5, sticky= SE)
         
         self.colnr = 0
         self.rownrleft = 0
@@ -120,9 +117,9 @@ class GUI(Tk):
         self.titlelbl.grid(column=0, row = 0,sticky=N)        
         self.titlelbl2.grid(column=0, row = 0,sticky=N)
         
-        self.statuslabel = Label(self.botFrame, text="Script status :  ",
-                                    bg="black",fg="#00CC00", font=("Helvetica", 24))
-        self.statuslabel.grid(column=0, row = 0)
+        # self.statuslabel = Label(self.botFrame, text="Script status :  ",
+                                    # bg="black",fg="#00CC00", font=("Helvetica", 24))
+        # self.statuslabel.grid(column=0, row = 0)
         
         self.progress = ttk.Progressbar(self.probar,orient ="horizontal",
                                             length = 410, mode ="determinate")
@@ -135,13 +132,19 @@ class GUI(Tk):
                                 bg="black", fg="#00CC00",font=("Helvetica", 24))
         self.titlelbl3.grid(column=0, row = 1)
         
+        
+        
         self.statuscount1 = Label(self.botFrame, text="Pinger last run in :",
                                     fg="#00CC00", bg="black", font=("Helvetica", 24))
-        self.statuscount1.grid(column=0, row = 0)
+        self.statuscount1.grid(column=1, row = 1)
         
         self.statuscount = Label(self.botFrame, textvariable=self.timecount,
                                     fg="#00CC00", bg="black", font=("Helvetica", 24))
-        self.statuscount.grid(column=0, row = 1)
+        self.statuscount.grid(column=1, row = 2)
+        
+        self.exitbutton = Button(self.botFrame, text="Exit",
+                                    fg="black", bg="#00CC00", font=("Helvetica", 24), command = systemexit)
+        self.exitbutton.grid(column=2, row = 2,sticky=SE)
         self.i = 0
         self.tk.after(1000, self.task)
         self.label = {}
@@ -212,7 +215,7 @@ class GUI(Tk):
 
         self.right.columnconfigure(0,minsize=self.fwidth*2)
 
-        self.center.columnconfigure(0,minsize=self.fwidth)
+        self.center.columnconfigure(0,minsize=2)
         
         self.tk.after(1000, self.task)        
             
@@ -237,8 +240,8 @@ def Pinger():
                 datachck+=1
                 if datachck == 11:
                     datachck =0
-                response = subprocess.call("ping -n 1 " + hostname,
-                                            creationflags=DETACHED_PROCESS)
+                response = subprocess.call("ping -n 1 " + hostname, creationflags=DETACHED_PROCESS,
+                                             stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
                 #response = os.system("ping -n 1 " + hostname)
                 savestatistics(hostname)
                 compresion(hostname,datachck)
@@ -250,9 +253,7 @@ def Pinger():
                     
                 else:
                     recieved-=1
-                cv+=1
-
-                    
+                cv+=1             
                                 
             if recieved < 8 : 
                 ele["status"] = "false"
@@ -280,8 +281,8 @@ def Pinger():
             try: #If server was offline it checks if server came back online
                 serverback=0
                 for i in range(10):
-                    responsecheck = subprocess.call("ping -n 1 " + hostname,
-                                                    creationflags=DETACHED_PROCESS)
+                    responsecheck = subprocess.call("ping -n 1 " + hostname,creationflags=DETACHED_PROCESS,
+                                                     stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
                     #responsecheck =  os.system("ping " + hostname)
                     
                     if responsecheck == 0:
@@ -296,7 +297,7 @@ def Pinger():
                 #print("Failed verify offline server")
             
     try:
-        savefile(sorted(list, key=itemgetter('status'), reverse=True))
+        savefile(sorted(list, key=itemgetter('status'), reverse=True ))
     except:
         print("Program Failed")
     loopend=True
@@ -305,30 +306,7 @@ def Pinger():
     time.sleep(60)
     timetorun = True
     _thread.exit()
-    
-    
-    
 
-
-# class ProgramManager(threading.Thread):
-
-    # def run(self):
-        # while True:
-            # name= threading.currentThread().getName()
-            # if name == "gui":
-                # Gui= GUI()
-                # GUI().mainloop()
-            # if name == "pinger":
-                # Pinger()
-    
-
-# if __name__ == '__main__':
-    # x = ProgramManager(name="gui")
-
-    # y = ProgramManager(name="pinger")
-    # x.start()
-    # y.start()
-#Gui= GUI()
 cv=0
 timetorun = True
 loopend= False
